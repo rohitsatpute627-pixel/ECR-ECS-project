@@ -101,7 +101,7 @@ git --version
 Clone the sample application repository and enter its application directory:
 
 ```bash
-git clone https://github.com/awsdevopscloudarchitect/hdfcwebsite.git
+git clone https://github.com/rohitsatpute627-pixel/ECR-ECS-project
 cd hdfcwebsite
 cd insurance
 ```
@@ -337,4 +337,5 @@ ECR-ECS-project/
 
 ---
 
-**Author:** Add your name and GitHub profile here.
+**Author:** ROHIT SATPUTE
+
