@@ -1,0 +1,33 @@
+```yaml
+version: 0.2
+
+env:
+  variables:
+    AWS_ACCOUNT_ID: "488914879248"
+    AWS_DEFAULT_REGION: "ap-south-1"
+    ECR_REPOSITORY: "hdfcwebsite"
+    CONTAINER_NAME: "hdfc-insurance"
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR"
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+
+  build:
+    commands:
+      - echo "Building insurance website"
+      - docker build -t hdfc-insurance:latest ./insurance
+      - docker tag hdfc-insurance:latest "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:latest"
+      - docker push "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:latest"
+
+  post_build:
+    commands:
+      - echo "Creating deployment artifact"
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:latest" > "$CODEBUILD_SRC_DIR/imagedefinitions.json"
+      - cat "$CODEBUILD_SRC_DIR/imagedefinitions.json"
+
+artifacts:
+  files:
+    - imagedefinitions.json
+```
